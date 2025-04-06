@@ -9,14 +9,12 @@ OUTPUT_KV_PATH = "word2vec_filtered.kv"   # Output filtered model
 
 # === HELPERS ===
 def remove_accents(word: str) -> str:
-    """Remove accents and diacritics from a given word."""
     return ''.join(
         char for char in unicodedata.normalize('NFKD', word)
         if not unicodedata.combining(char)
     )
 
 def load_reference_vocabulary(path: str) -> set:
-    """Load the normalized vocabulary list (one word per line, no accents)."""
     with open(path, "r", encoding="utf-8") as file:
         return set(line.strip().lower() for line in file if line.strip())
 
