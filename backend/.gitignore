@@ -1,5 +1,8 @@
 .venv
-models/word2vec_skip_100.kv
 models/word2vec_skip_100.txt
+models/word2vec_skip_100.kv
 models/word2vec_skip_100.kv.vectors.npy
-models/glove_s300.txt
+models/word2vec_filtrado.kv
+models/word2vec_filtrado.vectors.npy
+__pycache__/
+/games/
