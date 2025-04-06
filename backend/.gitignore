@@ -1,0 +1,5 @@
+.venv
+models/fasttext_skip_300.txt
+models/word2vec_skip_100.txt
+models/word2vec_skip_300.txt
+models/glove_s300.txt
