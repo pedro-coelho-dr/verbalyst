@@ -11,4 +11,4 @@ def exportar_vocab(path_modelo, path_saida="vocabulario.txt"):
     print(f"Exportado {len(vocab)} palavras para {path_saida}")
 
 if __name__ == "__main__":
-    exportar_vocab("../models/word2vec_skip_100.kv")
+    exportar_vocab("../models/word2vec_filtrado.kv")
