@@ -1,0 +1,28 @@
+Top 5 mais próximas de 'felicidade':
+alegria: 0.6806
+bem-aventurança: 0.6470
+tristeza: 0.6294
+vaidade: 0.6263
+compaixão: 0.6107
+
+Top 5 mais distantes de 'felicidade':
+ex-usaf: -0.2549
+thielbek: -0.2463
+rece-beram: -0.2388
+parlamento.os: -0.2380
+des-tacados: -0.2374
+
+Similaridade media (emocoes): 0.4003
+Similaridade media (transportes): 0.3967
+Similaridade media (profissoes): 0.4519
+
+Teste de flexoes:
+felicidade ↔ felicidades: 0.2193
+carro ↔ carros: 0.5728
+andar ↔ andando: 0.2971
+bom ↔ boa: 0.3081
+
+Testes de analogia:
+rei - homem + mulher ≈ rainha (0.6601)
+paris - franca + brasil ≈ lyon (0.4419)
+professor - escola + hospital ≈ cirurgião (0.5730)
