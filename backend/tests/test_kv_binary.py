@@ -1,9 +1,9 @@
 from gensim.models import KeyedVectors
 
 # ========== CONFIGURAÇÃO ==========
-path = "../models/word2vec_skip_100.kv"  # Altere aqui para outro modelo .kv
+path = "../models/word2vec_filtrado.kv"  # Altere aqui para outro modelo .kv
 palavra_secreta = "felicidade"
-arquivo_resultado = "benchmark_word2vec_skip_100_binkv.txt"
+arquivo_resultado = "benchmark_word2vec_filtrado.txt"
 
 categorias = {
     "emocoes": ["felicidade", "alegria", "tristeza", "raiva", "medo", "odio", "euforia"],
