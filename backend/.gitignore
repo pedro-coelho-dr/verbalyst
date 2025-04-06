@@ -6,3 +6,4 @@ models/word2vec_filtrado.kv
 models/word2vec_filtrado.vectors.npy
 __pycache__/
 /games/
+models/br-sa.txt

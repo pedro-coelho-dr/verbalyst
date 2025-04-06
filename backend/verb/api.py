@@ -5,8 +5,24 @@ from pathlib import Path
 from functools import lru_cache
 import json
 import unicodedata
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# ========== Permitir frontend local durante desenvolvimento
+origins = [
+    "http://localhost:9000",  # Quasar dev server
+    "http://127.0.0.1:9000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # ou ["*"] para todos (não recomendado em prod)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+# ==========
 
 def remove_accents(word: str) -> str:
     return ''.join(
