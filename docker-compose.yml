@@ -1,0 +1,34 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: verbalyst-api
+    restart: unless-stopped
+    expose:
+      - "8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - verbalyst-net
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: verbalyst-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      # - "443:443"
+    depends_on:
+      - backend
+    networks:
+      - verbalyst-net
+
+networks:
+  verbalyst-net:
+    driver: bridge
+

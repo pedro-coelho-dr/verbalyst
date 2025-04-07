@@ -1,7 +1,7 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Path
+from pathlib import Path as FilePath
 from pydantic import BaseModel
 from verb.config import GAMES_PATH, FIXED_WORD
-from pathlib import Path
 from functools import lru_cache
 import json
 import unicodedata
@@ -12,7 +12,8 @@ app = FastAPI()
 # ========== Permitir frontend local durante desenvolvimento
 origins = [
     "http://localhost:9000",  # Quasar dev server
-    "http://127.0.0.1:9000"
+    "http://127.0.0.1:9000",
+    "http://localhost"
 ]
 
 app.add_middleware(
@@ -41,10 +42,11 @@ def load_game_from_disk(word: str):
     with open(filepath, encoding="utf-8") as f:
         return json.load(f)
 
-@app.get("/guess")
+@app.get("/verb/guess/{guess}")
 def check_guess(
-    guess: str = Query(..., description="The word guessed by the player")
+    guess: str = Path(..., description="The word guessed by the player")  # <- agora vai funcionar
 ):
+
     normalized_guess = remove_accents(guess.strip().lower())
     target_word = remove_accents(FIXED_WORD.strip().lower())
 
