@@ -1,6 +1,8 @@
 tests/
 README.md
 
+models/word2vec_skip_100.txt
+
 # Ambientes virtuais
 .venv/
 __pycache__/
