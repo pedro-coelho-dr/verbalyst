@@ -4,6 +4,8 @@ models/word2vec_skip_100.kv
 models/word2vec_skip_100.kv.vectors.npy
 models/word2vec_filtrado.kv
 models/word2vec_filtrado.vectors.npy
+models/scripts/word2vec_skip_100.txt
+models/word2vec_skip_100.txt
+models/scripts/br-sa.txt
 __pycache__/
-/games/
-models/br-sa.txt
+games/game*
