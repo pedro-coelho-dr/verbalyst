@@ -72,9 +72,7 @@ watch(guesses, (newVal) => {
 
 const submitGuess = async () => {
   try {
-    const res = await api.get<GuessResponse>('/guess', {
-      params: { guess: guess.value }
-    })
+    const res = await api.get<GuessResponse>(`guess/${guess.value}`)
 
     error.value = null
 

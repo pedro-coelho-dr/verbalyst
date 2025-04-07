@@ -1,0 +1,25 @@
+tests/
+README.md
+
+# Ambientes virtuais
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Diretórios que não precisam ir pro container
+tests/
+*.log
+
+# Arquivos editor/config
+.vscode/
+.idea/
+*.swp
+
+# Ignorar tudo que o Git ignora também (opcional)
+.git
+.gitignore
+
+# MacOS/Linux cache
+.DS_Store
+Thumbs.db
