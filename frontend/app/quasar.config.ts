@@ -58,7 +58,7 @@ export default defineConfig((/* ctx */) => {
       // publicPath: '/',
       // analyze: true,
        env: {
-        VITE_API_URL: process.env.VITE_API_URL
+        VITE_API_URL: 'https://verbalyst.corisco.space/verb/'
        },
       // rawDefine: {}
       // ignorePublicFolder: true,
