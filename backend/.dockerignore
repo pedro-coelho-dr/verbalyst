@@ -1,7 +1,6 @@
 tests/
 README.md
 models/scripts
-models/word2vec_skip_100.txt
 
 # Ambientes virtuais
 .venv/
