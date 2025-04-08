@@ -8,4 +8,7 @@ RUN npm install -g @quasar/cli
 
 RUN npm install
 
+RUN rm -rf dist
+
 RUN quasar build
+
