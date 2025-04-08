@@ -22,4 +22,4 @@ COPY . .
 EXPOSE 8000
 
 # Comando para rodar o app
-CMD ["gunicorn", "verb.api:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "verb.api.routes:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]

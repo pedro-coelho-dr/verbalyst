@@ -1,6 +1,6 @@
 import random
-from verb.model import load_model
-from verb.config import WORD_SELECTION_STRATEGY, FIXED_WORD
+from verb.core.model import load_model
+from verb.core.config import WORD_SELECTION_STRATEGY, FIXED_WORD
 
 def choose_word_of_the_day():
     model = load_model()
