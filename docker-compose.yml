@@ -20,6 +20,7 @@ services:
       dockerfile: nginx/Dockerfile
       args:
         NGINX_ENV: ${NGINX_ENV}
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL}
     container_name: verbalyst-nginx
     restart: unless-stopped
     ports:
