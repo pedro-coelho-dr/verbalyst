@@ -24,21 +24,24 @@ services:
     networks:
       - verbalyst-net
 
-  nginx:
+    nginx:
     build:
       context: ./nginx
       dockerfile: Dockerfile
-    volumes:
-      - frontend-dist:/usr/share/nginx/html
     container_name: verbalyst-nginx
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - backend
       - frontend-builder
+    volumes:
+      - frontend-dist:/usr/share/nginx/html
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     networks:
       - verbalyst-net
+
 
 networks:
   verbalyst-net:
