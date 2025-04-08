@@ -8,15 +8,16 @@ import unicodedata
 
 from verb.core.config import GAMES_PATH
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(os.path.dirname(__file__)), '..', '.env'))
 
 app = FastAPI(title="Verbalyst API")
 
-# ========= CORS (Dev only) ========= #
-origins = [
-    "http://localhost:9000",
-    "http://127.0.0.1:9000",
-    "http://localhost"
-]
+
+origins = os.getenv("CORS_ORIGINS", "").split(",")
+
 
 app.add_middleware(
     CORSMiddleware,

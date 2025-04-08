@@ -9,3 +9,4 @@ models/word2vec_skip_100.txt
 models/scripts/br-sa.txt
 __pycache__/
 games/game*
+.env
