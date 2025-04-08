@@ -26,6 +26,7 @@ jobs:
           ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
             cd /root/verbalyst
             git pull origin deploy
+            export NGINX_ENV=prod
             docker compose down
             docker compose up -d --build
           EOF
