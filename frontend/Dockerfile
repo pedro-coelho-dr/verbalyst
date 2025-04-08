@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./app/ ./
 
-ENV NODE_ENV=production
+RUN npm install -g @quasar/cli
 
 RUN npm install
 RUN npm run build
