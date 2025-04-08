@@ -10,7 +10,7 @@ declare module 'vue' {
 }
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost/verb/'
+  baseURL: 'https://verbalyst.corisco.space/verb/'
 })
 
 export default boot(({ app }) => {
