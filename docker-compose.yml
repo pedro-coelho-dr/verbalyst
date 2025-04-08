@@ -14,20 +14,12 @@ services:
     networks:
       - verbalyst-net
 
-  frontend-builder:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    volumes:
-      - frontend-dist:/app/dist/spa
-    command: echo "Frontend built"
-    networks:
-      - verbalyst-net
-
   nginx:
     build:
-      context: ./nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: nginx/Dockerfile
+      args:
+        NGINX_ENV: ${NGINX_ENV}
     container_name: verbalyst-nginx
     restart: unless-stopped
     ports:
@@ -35,17 +27,11 @@ services:
       - "443:443"
     depends_on:
       - backend
-      - frontend-builder
-    volumes:
-      - frontend-dist:/usr/share/nginx/html
-      - /etc/letsencrypt:/etc/letsencrypt:ro
     networks:
       - verbalyst-net
-
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
 
 networks:
   verbalyst-net:
     driver: bridge
-
-volumes:
-  frontend-dist:
