@@ -14,6 +14,15 @@ services:
     networks:
       - verbalyst-net
 
+  frontend-builder:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: frontend-builder
+    command: echo "Frontend built"
+    networks:
+      - verbalyst-net
+
   nginx:
     build:
       context: ./nginx
@@ -22,13 +31,12 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-      # - "443:443"
     depends_on:
       - backend
+      - frontend-builder
     networks:
       - verbalyst-net
 
 networks:
   verbalyst-net:
     driver: bridge
-

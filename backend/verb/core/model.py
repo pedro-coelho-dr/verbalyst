@@ -1,5 +1,5 @@
 from gensim.models import KeyedVectors
-from verb.config import MODEL_PATH
+from verb.core.config import MODEL_PATH
 
 _model = None
 
