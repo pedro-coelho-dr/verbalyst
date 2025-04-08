@@ -1,0 +1,12 @@
+node_modules
+.git
+.gitignore
+.vscode
+.env
+.quasar
+src/
+public/
+*.log
+*.ts
+*.json
+README.md
