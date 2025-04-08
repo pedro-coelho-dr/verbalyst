@@ -23,10 +23,15 @@ jobs:
 
       - name: Deploy para o Droplet
         run: |
-          ssh root@${{ secrets.DROPLET_IP }} << 'EOF'
+          ssh root@${{ secrets.DROPLET_IP }} << EOF
+            export NGINX_ENV="${{ vars.NGINX_ENV }}"
+            export CORS_ORIGINS="${{ vars.CORS_ORIGINS }}"
+            export VITE_API_BASE_URL="${{ vars.VITE_API_BASE_URL }}"
+
             cd /root/verbalyst
             git pull origin deploy
-            export NGINX_ENV=prod
             docker compose down
-            docker compose up -d --build
+            docker compose build
+            docker compose up -d
           EOF
+
