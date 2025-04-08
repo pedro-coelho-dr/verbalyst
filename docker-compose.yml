@@ -24,7 +24,7 @@ services:
     networks:
       - verbalyst-net
 
-    nginx:
+  nginx:
     build:
       context: ./nginx
       dockerfile: Dockerfile
