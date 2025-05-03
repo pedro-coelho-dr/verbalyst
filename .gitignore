@@ -2,3 +2,4 @@
 .env
 __pycache__/
 logs/
+nlp_pipeline/data/*.txt
