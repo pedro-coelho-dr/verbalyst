@@ -6,6 +6,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 gunicorn verb.api.routes:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
 ```
+backend/
 .env
 `CORS_ORIGINS=http://localhost:9000,http://localhost`
 
@@ -16,9 +17,9 @@ npm install -g @quasar/cli
 npm install
 quasar dev
 ```
-
+frontend/app/
 .env
-`export VITE_API_BASE_URL=http://localhost/verb/`
+`VITE_API_BASE_URL=http://localhost/verb/`
 
 
 ## Root
@@ -32,6 +33,7 @@ docker compose up --build
 backend
 `docker exec -it verbalyst-api /bin/bash`
 
-
+root/
 .env
-`export NGINX_ENV=dev`
+`NGINX_ENV=dev´
+`VITE_API_BASE_URL=http://localhost/verb/`
