@@ -4,7 +4,7 @@ cd backend
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-gunicorn verb.api.routes:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+gunicorn verb.api.routes:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:9000
 ```
 .env
 `CORS_ORIGINS=http://localhost:9000,http://localhost`
@@ -18,7 +18,7 @@ quasar dev
 ```
 
 .env
-`export VITE_API_BASE_URL=http://localhost/verb/`
+`VITE_API_BASE_URL=http://localhost/verb/`
 
 
 ## Root
