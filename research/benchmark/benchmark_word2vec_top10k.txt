@@ -1,0 +1,28 @@
+Top 5 mais próximas de 'felicidade':
+alegria: 0.7991
+bondade: 0.7793
+vaidade: 0.7710
+alma: 0.7568
+imaginação: 0.7545
+
+Top 5 mais distantes de 'felicidade':
+incluído: -0.2333
+decurso: -0.2190
+alfandegário: -0.2129
+tardar: -0.2084
+general: -0.2069
+
+Similaridade media (emocoes): 0.6091
+Similaridade media (transportes): 0.6888
+Similaridade media (profissoes): 0.6415
+
+Teste de flexoes:
+felicidade ou felicidades fora do vocabulário
+carro ou carros fora do vocabulário
+andar ou andando fora do vocabulário
+bom ↔ boa: 0.3256
+
+Testes de analogia:
+rei - homem + mulher ≈ sobrinha (0.7320)
+Palavra fora do vocabulário: "Key 'franca' not present in vocabulary"
+professor - escola + hospital ≈ médico (0.6799)
