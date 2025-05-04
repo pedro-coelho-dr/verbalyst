@@ -2,5 +2,5 @@
 .env
 __pycache__/
 logs/
-nlp_pipeline/data/*.txt
-nlp_pipeline/data/
+data_pipeline/data/*.txt
+data_pipeline/data/
