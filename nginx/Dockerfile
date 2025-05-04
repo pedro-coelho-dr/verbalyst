@@ -7,7 +7,6 @@ WORKDIR /app
 COPY ../frontend/app/ ./
 
 ARG VITE_API_BASE_URL
-ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 
 RUN npm install -g @quasar/cli
 RUN npm install
