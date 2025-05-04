@@ -3,3 +3,4 @@
 __pycache__/
 logs/
 nlp_pipeline/data/*.txt
+nlp_pipeline/data/

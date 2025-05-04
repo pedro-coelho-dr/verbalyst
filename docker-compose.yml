@@ -1,12 +1,26 @@
-version: '3.9'
-
 services:
+  db:
+      image: postgres:17
+      container_name: verbalyst_db
+      restart: unless-stopped
+      env_file: .env
+      environment:
+        POSTGRES_DB: ${POSTGRES_DB}
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      volumes:
+        - verbalyst_pgdata:/var/lib/postgresql/data
+      ports:
+        - "5432:5432"
+      networks:
+        - verbalyst-net
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: verbalyst-api
     restart: unless-stopped
+    env_file: backend/.env
     expose:
       - "8000"
     environment:
@@ -32,6 +46,9 @@ services:
       - verbalyst-net
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
+
+volumes:
+  verbalyst_pgdata:
 
 networks:
   verbalyst-net:

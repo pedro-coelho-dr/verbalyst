@@ -7,7 +7,15 @@ pip install -r requirements.txt
 gunicorn verb.api.routes:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:9000
 ```
 .env
-`CORS_ORIGINS=http://localhost:9000,http://localhost`
+`CORS_ORIGINS=http://localhost:9000,http://localhost
+
+POSTGRES_DB=verbalyst_db
+POSTGRES_USER=verbalyst_user
+POSTGRES_PASSWORD=dev_secure_password_123
+POSTGRES_HOST=db
+POSTGRES_PORT=5432
+
+DATABASE_URL=postgresql+psycopg2://verbalyst_user:dev_secure_password_123@db:5432/verbalyst_db`
 
 ## Frontend
 ```bash
@@ -34,4 +42,5 @@ backend
 
 
 .env
-`export NGINX_ENV=dev`
+NGINX_ENV=dev
+VITE_API_BASE_URL=http://localhost:8000
