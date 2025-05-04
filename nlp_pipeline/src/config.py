@@ -1,0 +1,5 @@
+FREQ_PATH = "../data/lemas_totalbr_freq.txt"
+UTF8_DICT_PATH = "../data/br-utf8.txt"
+ASCII_DICT_PATH = "../data/br-sa.txt"
+MODEL_TXT_PATH = "../data/word2vec_skip_100.txt"
+MODEL_OUTPUT_PATH = "../models/word2vec_final.kv"
