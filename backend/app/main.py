@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from app.db.session import create_db_and_tables
+from backend.app.db.db import create_db_and_tables
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

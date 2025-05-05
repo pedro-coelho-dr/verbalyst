@@ -1,10 +1,9 @@
 from sqlmodel import SQLModel, Field
 from typing import Optional
 
-class Guess(SQLModel, table=True):
+class Distance(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    fk_player_id: int = Field(foreign_key="player.id")
-    guess: str
+    fk_word: int = Field(foreign_key="word.id")
+    fk_target: int = Field(foreign_key="word.id")
     distance: int
-    x: float
-    y: float
+

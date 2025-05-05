@@ -9,5 +9,5 @@ class Player(SQLModel, table=True):
     hints_used: int = 0
     completed: bool = False
     completed_at: Optional[datetime]
-    score_gained: int = 0
+    match_score: int = 0
     guesses_count: int = 0

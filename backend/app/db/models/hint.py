@@ -1,9 +1,10 @@
 from sqlmodel import SQLModel, Field
 from typing import Optional
 
-class WordScore(SQLModel, table=True):
+class Hint(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    fk_word: int = Field(foreign_key="word.id")
     fk_target: int = Field(foreign_key="word.id")
-    rank: int
-
+    fk_word: int = Field(foreign_key="word.id")
+    x: float
+    y: float
+    distance: int

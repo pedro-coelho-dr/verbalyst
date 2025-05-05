@@ -4,4 +4,6 @@ from .room import Room
 from .game import Game
 from .player import Player
 from .guess import Guess
-from .wordscore import WordScore
+from .distance import Distance
+from .coordinates import Coordinates
+from .hint import Hint

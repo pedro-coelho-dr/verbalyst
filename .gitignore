@@ -4,3 +4,4 @@ __pycache__/
 logs/
 data_pipeline/data/*.txt
 data_pipeline/data/
+game_builder/data/
