@@ -47,18 +47,46 @@ rename to `.env`
 docker exec -it verbalyst-api sh
 
 
-python -m app.scripts.create_db
-python -m app.scripts.populate_words
-python -m app.scripts.populate_games
 
+
+
+docker compose exec backend python3 src/db/main.py
 
 docker exec -it verbalyst_db psql -U verbalyst_user -d verbalyst_db
 
 
-\dt
-\d word
+SELECT * FROM profile LIMIT 5;
+SELECT * FROM word LIMIT 5;
+SELECT * FROM room LIMIT 5;
+SELECT * FROM game LIMIT 5;
+SELECT * FROM player LIMIT 5;
+SELECT * FROM guess LIMIT 5;
+SELECT * FROM distance LIMIT 5;
+SELECT * FROM hint LIMIT 5;
 
-SELECT * FROM word LIMIT 15;
-SELECT COUNT(*) FROM word;
-SELECT COUNT(DISTINCT word) FROM word;
-SELECT word, COUNT(*) FROM word GROUP BY word HAVING COUNT(*) > 1;
+
+
+
+SELECT pg_size_pretty(pg_database_size(current_database())) AS total_database_size;
+
+SELECT 
+  relname AS table_name,
+  pg_size_pretty(pg_total_relation_size(relid)) AS total_size
+FROM pg_catalog.pg_statio_user_tables
+ORDER BY pg_total_relation_size(relid) DESC;
+
+SELECT 'profile' AS table, COUNT(*) FROM profile
+UNION ALL SELECT 'word', COUNT(*) FROM word
+UNION ALL SELECT 'room', COUNT(*) FROM room
+UNION ALL SELECT 'game', COUNT(*) FROM game
+UNION ALL SELECT 'player', COUNT(*) FROM player
+UNION ALL SELECT 'guess', COUNT(*) FROM guess
+UNION ALL SELECT 'distance', COUNT(*) FROM distance
+UNION ALL SELECT 'hint', COUNT(*) FROM hint;
+
+SELECT 
+  relname AS table_name,
+  n_live_tup AS estimated_rows,
+  pg_size_pretty(pg_total_relation_size(relid)) AS total_size
+FROM pg_stat_user_tables
+ORDER BY pg_total_relation_size(relid) DESC;

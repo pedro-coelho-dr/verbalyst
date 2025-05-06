@@ -12,6 +12,6 @@ def get_coordinates(target: str, hints: list[str], model) -> dict[str, tuple[flo
     coords -= origin
 
     return {
-        word: (float(x), float(y))
+        word: (round(float(x), 4), round(float(y), 4))
         for word, (x, y) in zip(words, coords)
     }

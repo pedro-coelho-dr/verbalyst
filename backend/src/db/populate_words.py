@@ -1,6 +1,8 @@
-from app.core.config import settings
-from app.core.database import get_session
-from app.models.word import Word
+from core import settings, get_session
+
+from models import Word
+
+
 
 def load_vocab() -> list[str]:
     vocab_path = settings.STATIC_GAMES_DIR / "__vocab__.txt"
