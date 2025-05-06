@@ -1,4 +1,4 @@
-from .export import save_game, get_next_game_id
+from .export import save_game, get_next_game_id, save_vocab, get_next_vocab_filename
 from .target import load_targets
 from .hint import get_hints
 from .coordinates import get_coordinates

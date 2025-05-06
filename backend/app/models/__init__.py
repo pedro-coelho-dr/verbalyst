@@ -5,5 +5,4 @@ from .game import Game
 from .player import Player
 from .guess import Guess
 from .distance import Distance
-from .coordinates import Coordinates
 from .hint import Hint

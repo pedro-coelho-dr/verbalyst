@@ -19,7 +19,10 @@ quasar dev
 ```
 frontend/app/
 .env
-`VITE_API_BASE_URL=http://localhost/verb/`
+```bash
+#VITE_API_BASE_URL=http://localhost:8000/verb/
+VITE_API_BASE_URL=http://localhost/verb/
+```
 
 
 ## Root
@@ -33,7 +36,29 @@ docker compose up --build
 backend
 `docker exec -it verbalyst-api /bin/bash`
 
-root/
-.env
-`NGINX_ENV=dev´
-`VITE_API_BASE_URL=http://localhost/verb/`
+root/ 
+
+`.env.template`
+
+rename to `.env` 
+
+
+
+docker exec -it verbalyst-api sh
+
+
+python -m app.scripts.create_db
+python -m app.scripts.populate_words
+python -m app.scripts.populate_games
+
+
+docker exec -it verbalyst_db psql -U verbalyst_user -d verbalyst_db
+
+
+\dt
+\d word
+
+SELECT * FROM word LIMIT 15;
+SELECT COUNT(*) FROM word;
+SELECT COUNT(DISTINCT word) FROM word;
+SELECT word, COUNT(*) FROM word GROUP BY word HAVING COUNT(*) > 1;

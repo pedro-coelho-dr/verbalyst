@@ -1,5 +1,5 @@
 from config import MODEL_PATH, OUTPUT_DIR, TARGETS_PATH, NUM_HINTS
-from src import load_targets, get_distances, get_coordinates, get_hints, save_game
+from src import load_targets, get_distances, get_coordinates, get_hints, save_game, save_vocab
 from gensim.models import KeyedVectors
 
 
@@ -68,6 +68,8 @@ def main():
     model = load_model(MODEL_PATH)
     vocab = list(model.key_to_index.keys())
     targets = load_targets(TARGETS_PATH)
+
+    save_vocab(vocab, OUTPUT_DIR)
 
     print(f"[INFO] Loaded {len(vocab)} words from model.")
     print(f"[INFO] Loaded {len(targets)} target words.")

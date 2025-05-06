@@ -1,14 +1,13 @@
-tests/
-README.md
-models/scripts
+
 
 # Ambientes virtuais
+.python-version
 .venv/
 __pycache__/
 *.pyc
 *.pyo
 
-# Diretórios que não precisam ir pro container
+# Diretórios 
 tests/
 *.log
 
@@ -16,10 +15,6 @@ tests/
 .vscode/
 .idea/
 *.swp
-
-# Ignorar tudo que o Git ignora também (opcional)
-.git
-.gitignore
 
 # MacOS/Linux cache
 .DS_Store
