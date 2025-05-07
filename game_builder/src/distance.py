@@ -11,17 +11,7 @@ def get_distances(target: str, vocab: list[str], model) -> list[tuple[str, int]]
     # Ordena por similaridade decrescente
     similarities.sort(key=lambda x: x[1], reverse=True)
 
-    # Normaliza todas as similaridades para distância 0–9999
-    sims_only = [sim for _, sim in similarities]
-    sim_max = max(sims_only)
-    sim_min = min(sims_only)
-    range_sim = sim_max - sim_min if sim_max > sim_min else 1e-6
-
-    normalized_distance = []
-    for word, sim in similarities:
-        norm = 1.0 - ((sim - sim_min) / range_sim)
-        distance = int(round(norm * 9999))
-        normalized_distance.append((word, distance))
+    # Em vez de normalizar entre 0–9999, usamos distância progressiva 1, 2, 3...
+    normalized_distance = [(word, i + 1) for i, (word, _) in enumerate(similarities)]
 
     return normalized_distance
-
