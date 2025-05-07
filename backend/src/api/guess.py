@@ -6,7 +6,7 @@ from src.core.utils import normalize_word
 from src.models import Game, Word, Distance
 from src.schemas import GuessOut
 
-router = APIRouter(prefix="/guess", tags=["Guess"])
+router = APIRouter(tags=["Guess"])
 
 @router.get("/{game_id}/{guess}", response_model=GuessOut)
 def guess_word(game_id: int, guess: str):
