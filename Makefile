@@ -21,6 +21,10 @@ shell:
 psql:
 	docker exec -it verbalyst_db psql -U verbalyst_user -d verbalyst_db
 
+populate:
+	docker compose exec backend python3 src/db/main.py
+
+
 
 # ==============================
 # Alembic Migrations
@@ -37,6 +41,9 @@ downgrade:
 
 history:
 	docker compose exec backend alembic history
+
+fix-alembic:
+	sed -i 's/sqlmodel\.sql\.sqltypes\.AutoString()/sa.String()/g' backend/alembic/versions/*.py
 
 # ==============================
 # Cleanup

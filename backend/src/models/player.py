@@ -4,7 +4,7 @@ from datetime import datetime
 
 class Player(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    fk_game_id: int = Field(foreign_key="game.id")
+    fk_room_id: int = Field(foreign_key="room.id")
     fk_profile_id: int = Field(foreign_key="profile.id")
     hints_used: int = 0
     completed: bool = False

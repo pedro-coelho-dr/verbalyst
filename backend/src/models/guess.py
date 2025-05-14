@@ -4,6 +4,7 @@ from typing import Optional
 class Guess(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     fk_player_id: int = Field(foreign_key="player.id")
+    fk_room_id: Optional[int] = Field(default=None, foreign_key="room.id")
     guess: str
     distance: int
     x: float
