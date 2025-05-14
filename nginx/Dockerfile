@@ -15,9 +15,9 @@ RUN quasar build
 
 FROM nginx:alpine
 
-ARG NGINX_ENV=dev
+ARG APP_ENV=dev
 
-COPY ./nginx/${NGINX_ENV}.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx/${APP_ENV}.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=frontend-builder /app/dist/spa /usr/share/nginx/html
 

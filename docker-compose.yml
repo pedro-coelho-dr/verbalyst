@@ -26,6 +26,10 @@ services:
     container_name: verbalyst-api
     restart: unless-stopped
     environment:
+      APP_ENV: ${APP_ENV}
+      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}
+      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET}
+      OAUTH_REDIRECT_URI: ${OAUTH_REDIRECT_URI}
       CORS_ORIGINS: ${CORS_ORIGINS}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -33,6 +37,9 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
       DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+      JWT_EXPIRE_MINUTES: ${JWT_EXPIRE_MINUTES}
     volumes:
       - ./backend/static_games:/app/static_games
     expose:
@@ -48,7 +55,7 @@ services:
       context: .
       dockerfile: nginx/Dockerfile
       args:
-        NGINX_ENV: ${NGINX_ENV}
+        APP_ENV: ${APP_ENV}
         VITE_API_BASE_URL: ${VITE_API_BASE_URL}
     container_name: verbalyst-nginx
     restart: unless-stopped

@@ -5,9 +5,9 @@ from src.core import get_session
 from src.models import Game, Hint, Word
 from src.schemas import HintOut
 
-router = APIRouter(tags=["Hint"])
+hint_router = APIRouter(tags=["Hint"])
 
-@router.get("/{game_id}/{hint_number}", response_model=HintOut)
+@hint_router.get("/{game_id}/{hint_number}", response_model=HintOut)
 def get_hint(game_id: int, hint_number: int):
     if not (1 <= hint_number <= 10):
         raise HTTPException(status_code=400, detail="Hint number must be between 1 and 10")
