@@ -16,6 +16,8 @@ def guess_word(room_id: int, guess: str, user: Profile = Depends(get_current_use
         room = session.get(Room, room_id)
         if not room or not room.fk_game_id:
             raise HTTPException(status_code=404, detail="Room or game not found")
+        if room.owner_id != user.id:
+            raise HTTPException(status_code=403, detail="You do not have access to this room.")
 
         game = session.get(Game, room.fk_game_id)
         if not game:
@@ -42,8 +44,7 @@ def guess_word(room_id: int, guess: str, user: Profile = Depends(get_current_use
             correct=word_obj.id == game.fk_target_word
         )
 
-@room_router.get("/{room_id}/hint/{hint_number}", response_model=HintOut)
-def get_hint(room_id: int, hint_number: int):
+def get_hint(room_id: int, hint_number: int, user: Profile = Depends(get_current_user)):
     if not (1 <= hint_number <= 10):
         raise HTTPException(status_code=400, detail="Hint number must be between 1 and 10")
 
@@ -51,6 +52,9 @@ def get_hint(room_id: int, hint_number: int):
         room = session.get(Room, room_id)
         if not room or not room.fk_game_id:
             raise HTTPException(status_code=404, detail="Room or game not found")
+        
+        if room.owner_id != user.id:
+            raise HTTPException(status_code=403, detail="You do not have access to this room.")
 
         game = session.get(Game, room.fk_game_id)
         if not game:

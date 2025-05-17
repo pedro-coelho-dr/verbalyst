@@ -6,7 +6,7 @@ from src.schemas import GuessOut, HintOut
 from src.services.daily import get_daily_game_id
 from src.core.utils import normalize_word
 
-daily_router = APIRouter(prefix="/daily", tags=["Daily Game"])
+daily_router = APIRouter(tags=["Daily"])
 
 @daily_router.get("/game")
 def get_daily_game():

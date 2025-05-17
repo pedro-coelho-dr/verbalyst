@@ -6,3 +6,4 @@ class Room(SQLModel, table=True):
     code: int = Field(index=True, unique=True)
     status: str = "active"
     fk_game_id: int = Field(foreign_key="game.id")
+    owner_id: int = Field(foreign_key="profile.id")
