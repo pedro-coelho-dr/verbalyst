@@ -59,6 +59,15 @@ def guess_word(guess: str):
         if not word_obj:
             raise HTTPException(status_code=404, detail="Word not found")
 
+        if word_obj.id == game.fk_target_word:
+            return GuessOut(
+                guess=guess,
+                distance=0,
+                x=0.0,
+                y=0.0,
+                correct=True
+            )
+
         dist = session.exec(
             select(Distance)
             .where(Distance.fk_target == game.fk_target_word)
@@ -68,12 +77,10 @@ def guess_word(guess: str):
         if not dist:
             raise HTTPException(status_code=404, detail="Word not in this game")
 
-        score = max(0.0, 100 - dist.distance / 100)
-
         return GuessOut(
             guess=guess,
             distance=dist.distance,
             x=dist.x,
             y=dist.y,
-            correct=word_obj.id == game.fk_target_word
+            correct=False
         )

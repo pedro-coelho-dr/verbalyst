@@ -71,7 +71,7 @@
                 overflow-wrap: break-word;
               "
             >
-              {{ item.guess }}
+              {{ item.guess || '-' }}
             </div>
 
             <div
@@ -84,7 +84,7 @@
                 text-align: center;
               "
             >
-              {{ item.score.toFixed(2) }}
+              {{ item.distance?.toFixed ? item.distance.toFixed(0) : '-' }}
             </div>
           </div>
         </q-item>
@@ -99,22 +99,27 @@ import { api } from 'boot/axios'
 import axios from 'axios'
 import { useGameId } from 'src/composables/useGameId'
 
-
 const { gameId } = useGameId()
 
 interface GuessResponse {
   guess: string
-  score: number
+  distance: number
+  x: number
+  y: number
   correct: boolean
 }
+
+const MAX_HINTS = 10
 
 const guess = ref('')
 const guesses = ref<GuessResponse[]>([])
 const error = ref<string | null>(null)
-const hintCount = ref<number>(3)
+const hintCount = ref<number>(MAX_HINTS)
+const hintNumbersUsed = ref<number[]>([])
 
 const LOCALSTORAGE_KEY = computed(() => `verbalyst_guesses_${gameId.value}`)
 const HINT_COUNT_KEY = computed(() => `verbalyst_hints_${gameId.value}`)
+const USED_HINT_NUMBERS_KEY = computed(() => `verbalyst_hint_numbers_${gameId.value}`)
 
 onMounted(loadLocalData)
 watch(gameId, loadLocalData)
@@ -122,8 +127,12 @@ watch(gameId, loadLocalData)
 function loadLocalData() {
   const savedGuesses = localStorage.getItem(LOCALSTORAGE_KEY.value)
   guesses.value = savedGuesses ? JSON.parse(savedGuesses) : []
+
   const savedHints = localStorage.getItem(HINT_COUNT_KEY.value)
-  hintCount.value = savedHints ? parseInt(savedHints, 10) : 3
+  hintCount.value = savedHints ? parseInt(savedHints, 10) : MAX_HINTS
+
+  const savedHintNumbers = localStorage.getItem(USED_HINT_NUMBERS_KEY.value)
+  hintNumbersUsed.value = savedHintNumbers ? JSON.parse(savedHintNumbers) : []
 }
 
 watch(guesses, val => {
@@ -134,11 +143,27 @@ watch(hintCount, val => {
   localStorage.setItem(HINT_COUNT_KEY.value, val.toString())
 })
 
+watch(hintNumbersUsed, val => {
+  localStorage.setItem(USED_HINT_NUMBERS_KEY.value, JSON.stringify(val))
+}, { deep: true })
+
 const submitGuess = async () => {
+  const normalized = guess.value.trim().toLowerCase()
+  const alreadyUsed = guesses.value.some(g => g.guess === normalized)
+
+  if (!normalized || alreadyUsed) {
+    error.value = alreadyUsed ? 'Palavra já usada.' : null
+    guess.value = ''
+    return
+  }
+
   try {
-    const res = await api.get<GuessResponse>(`guess/${gameId.value}/${guess.value}`)
+    const res = await api.get<GuessResponse>(`/daily/guess/${normalized}`)
     error.value = null
-    guesses.value.unshift(res.data)
+    guesses.value.unshift({
+      ...res.data,
+      guess: normalized // ensure consistent casing
+    })
     guess.value = ''
   } catch (err: unknown) {
     if (axios.isAxiosError(err) && err.response?.data?.detail) {
@@ -149,10 +174,30 @@ const submitGuess = async () => {
   }
 }
 
-const useHint = () => {
-  if (hintCount.value > 0) {
-    console.log('Usando dica...')
+
+const useHint = async () => {
+  if (hintCount.value <= 0) return
+
+  const hintNumber = MAX_HINTS - hintCount.value + 1
+  try {
+    const res = await api.get(`/daily/hint/${hintNumber}`)
+    const normalized = res.data.word.trim().toLowerCase()
+
+    const alreadyUsed = guesses.value.some(g => g.guess === normalized)
+    if (!alreadyUsed) {
+      guesses.value.unshift({
+        guess: normalized,
+        distance: Math.round(res.data.distance),
+        x: res.data.x,
+        y: res.data.y,
+        correct: false
+      })
+    }
+
+    hintNumbersUsed.value.push(hintNumber)
     hintCount.value--
+  } catch (err) {
+    console.error('Erro ao buscar dica', err)
   }
 }
 
@@ -164,24 +209,25 @@ const sortedGuesses = computed(() => {
   return [...guesses.value].sort((a, b) => {
     if (a.correct && !b.correct) return -1
     if (!a.correct && b.correct) return 1
-    return b.score - a.score
+    return a.distance - b.distance
   })
 })
 
 const getItemStyle = (item: GuessResponse): Record<string, string> => {
   if (item.correct) {
     return {
-      backgroundColor: '#C8A700', // cor dourada
+      backgroundColor: '#C8A700',
       color: '#1A1A1A'
     }
   }
   return {
-    backgroundColor: getScoreColorHex(item.score),
+    backgroundColor: getScoreColorHex(item.distance),
     color: '#F5F5F5'
   }
 }
 
-const getScoreColorHex = (score: number): string => {
+const getScoreColorHex = (distance: number): string => {
+  const score = Math.max(0, 100 - distance / 100)
   if (score >= 90) return '#311B92'
   if (score >= 80) return '#4527A0'
   if (score >= 70) return '#512DA8'

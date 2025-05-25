@@ -11,6 +11,13 @@ down:
 build:
 	docker compose build
 
+front:
+	docker compose stop nginx
+	docker compose rm -f nginx
+	docker rmi verbalyst-nginx || true
+	docker compose build nginx
+	docker compose up -d nginx
+
 rebuild:
 	docker compose down
 	docker compose up --build
