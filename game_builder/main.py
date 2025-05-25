@@ -28,7 +28,8 @@ def build_game(target: str, vocab: list[str], model, output_dir: str, num_hints:
     print(f"  → {len(hints)} hints selected.")
 
     print("  → Computing coordinates...")
-    coords = get_coordinates(target, list(distances_dict.keys()), model)
+    coords = get_coordinates(target, list(distances_dict.keys()), model, distances_dict)
+
 
     # Monta dados dos hints
     hint_data = [

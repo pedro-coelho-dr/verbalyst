@@ -1,6 +1,16 @@
 <template>
   <q-page class="flex flex-top justify-center q-pt-xl">
     <div class="q-pa-md" style="max-width: 400px; width: 100%">
+      <ScatterMap
+        :points="guesses.map(g => ({
+          x: g.x,
+          y: g.y,
+          label: g.guess,
+          isCorrect: g.correct,
+          type: 'guess',
+          distance: g.distance
+        }))"
+      />
 
       <!-- Campo de entrada -->
       <q-form @submit="submitGuess">
@@ -98,8 +108,16 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { api } from 'boot/axios'
 import axios from 'axios'
 import { useGameId } from 'src/composables/useGameId'
+import ScatterMap from 'components/ScatterMap.vue'
 
 const { gameId } = useGameId()
+const MAX_HINTS = 10
+
+const guess = ref('')
+const guesses = ref<GuessResponse[]>([])
+const error = ref<string | null>(null)
+const hintCount = ref<number>(MAX_HINTS)
+const hintNumbersUsed = ref<number[]>([])
 
 interface GuessResponse {
   guess: string
@@ -109,14 +127,6 @@ interface GuessResponse {
   correct: boolean
 }
 
-const MAX_HINTS = 10
-
-const guess = ref('')
-const guesses = ref<GuessResponse[]>([])
-const error = ref<string | null>(null)
-const hintCount = ref<number>(MAX_HINTS)
-const hintNumbersUsed = ref<number[]>([])
-
 const LOCALSTORAGE_KEY = computed(() => `verbalyst_guesses_${gameId.value}`)
 const HINT_COUNT_KEY = computed(() => `verbalyst_hints_${gameId.value}`)
 const USED_HINT_NUMBERS_KEY = computed(() => `verbalyst_hint_numbers_${gameId.value}`)
@@ -125,14 +135,9 @@ onMounted(loadLocalData)
 watch(gameId, loadLocalData)
 
 function loadLocalData() {
-  const savedGuesses = localStorage.getItem(LOCALSTORAGE_KEY.value)
-  guesses.value = savedGuesses ? JSON.parse(savedGuesses) : []
-
-  const savedHints = localStorage.getItem(HINT_COUNT_KEY.value)
-  hintCount.value = savedHints ? parseInt(savedHints, 10) : MAX_HINTS
-
-  const savedHintNumbers = localStorage.getItem(USED_HINT_NUMBERS_KEY.value)
-  hintNumbersUsed.value = savedHintNumbers ? JSON.parse(savedHintNumbers) : []
+  guesses.value = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY.value) || '[]')
+  hintCount.value = parseInt(localStorage.getItem(HINT_COUNT_KEY.value) || `${MAX_HINTS}`, 10)
+  hintNumbersUsed.value = JSON.parse(localStorage.getItem(USED_HINT_NUMBERS_KEY.value) || '[]')
 }
 
 watch(guesses, val => {
@@ -147,9 +152,18 @@ watch(hintNumbersUsed, val => {
   localStorage.setItem(USED_HINT_NUMBERS_KEY.value, JSON.stringify(val))
 }, { deep: true })
 
+function normalizeInput(text: string): string {
+  return text
+    .normalize('NFD') // separa acentos
+    .replace(/[\u0300-\u036f]/g, '') // remove acentos
+    .trim()
+    .toLowerCase()
+}
+
 const submitGuess = async () => {
-  const normalized = guess.value.trim().toLowerCase()
-  const alreadyUsed = guesses.value.some(g => g.guess === normalized)
+  const input = guess.value
+  const normalized = normalizeInput(input)
+  const alreadyUsed = guesses.value.some(g => normalizeInput(g.guess) === normalized)
 
   if (!normalized || alreadyUsed) {
     error.value = alreadyUsed ? 'Palavra já usada.' : null
@@ -158,22 +172,19 @@ const submitGuess = async () => {
   }
 
   try {
-    const res = await api.get<GuessResponse>(`/daily/guess/${normalized}`)
+    const res = await api.get<GuessResponse>(`/daily/guess/${input.trim()}`)
     error.value = null
     guesses.value.unshift({
       ...res.data,
-      guess: normalized // ensure consistent casing
+      guess: res.data.guess // mantém original para exibir com acento
     })
     guess.value = ''
-  } catch (err: unknown) {
-    if (axios.isAxiosError(err) && err.response?.data?.detail) {
-      error.value = err.response.data.detail
-    } else {
-      error.value = 'Erro ao consultar'
-    }
+  } catch (err) {
+    error.value = axios.isAxiosError(err) && err.response?.data?.detail
+      ? err.response.data.detail
+      : 'Erro ao consultar'
   }
 }
-
 
 const useHint = async () => {
   if (hintCount.value <= 0) return
@@ -181,12 +192,13 @@ const useHint = async () => {
   const hintNumber = MAX_HINTS - hintCount.value + 1
   try {
     const res = await api.get(`/daily/hint/${hintNumber}`)
-    const normalized = res.data.word.trim().toLowerCase()
+    const original = res.data.word
+    const normalized = normalizeInput(original)
+    const alreadyUsed = guesses.value.some(g => normalizeInput(g.guess) === normalized)
 
-    const alreadyUsed = guesses.value.some(g => g.guess === normalized)
     if (!alreadyUsed) {
       guesses.value.unshift({
-        guess: normalized,
+        guess: original,
         distance: Math.round(res.data.distance),
         x: res.data.x,
         y: res.data.y,
@@ -226,7 +238,7 @@ const getItemStyle = (item: GuessResponse): Record<string, string> => {
   }
 }
 
-const getScoreColorHex = (distance: number): string => {
+function getScoreColorHex(distance: number): string {
   const score = Math.max(0, 100 - distance / 100)
   if (score >= 90) return '#311B92'
   if (score >= 80) return '#4527A0'

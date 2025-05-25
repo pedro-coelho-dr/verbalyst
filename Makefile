@@ -18,6 +18,9 @@ front:
 	docker compose build nginx
 	docker compose up -d nginx
 
+front-fast:
+	docker compose restart nginx
+
 rebuild:
 	docker compose down
 	docker compose up --build
