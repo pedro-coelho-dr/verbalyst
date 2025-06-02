@@ -44,9 +44,4 @@ O modo multiplayer permite que dois ou mais jogadores participem de partidas sí
 
 ## Observações
 
-- O sistema suporta múltiplas salas simultâneas.
-- Toda comunicação é feita via mensagens JSON.
-
-## Referências
-- [WebSockets Python](https://websockets.readthedocs.io/)
-- [Asyncio](https://docs.python.org/3/library/asyncio.html)+
+O multiplayer ainda não foi implementado totalmente mas a estrutura do banco de dados já está de acordo com a planejada.
