@@ -65,43 +65,53 @@ Foi selecionado o modelo **Word2Vec Skip-Gram com 100 dimensões**, por balancea
 ### Etapas
 
 1. **Extração de palavras frequentes**
-   - Entrada: arquivo de frequência (`lemas.totalbr.freq.txt`)
-   - Saída: top 10.000 palavras com no mínimo 2 letras
-   - Formato: apenas palavras (1 por linha), extraídas a partir do campo de lemas
+   - Entrada: `lemas_totalbr_freq.txt`
+   - Seleciona as 10.000 palavras mais frequentes com ≥ 2 letras e apenas caracteres alfabéticos.
+   - Converte para minúsculas e descarta o restante da linha.
 
-2. **Filtragem cruzada com dicionário léxico**
-   - Entrada: dicionário léxico (`br-utf8.txt`)
-   - Mantém apenas palavras que também existam no dicionário léxico
+2. **Filtragem com dicionário UTF-8**
+   - Entrada: `br-utf8.txt`
+   - Mantém apenas palavras presentes no dicionário léxico UTF-8 (com acentos).
 
-3. **Normalização**
-   - Remoção de acentos, cedilhas e conversão para minúsculas
-   - Remove duplicatas após a normalização
+3. **Normalização + remoção de duplicatas**
+   - Remove acentos e sinais gráficos (`NFKD`).
+   - Converte para minúsculas.
+   - Elimina duplicatas com base na forma normalizada.
 
-4. **Filtragem cruzada com dicionário normalizado**
-   - Entrada: `br-sa.txt` (dicionário sem acentos)
-   - Mantém apenas palavras encontradas também no dicionário sem acentos
+4. **Filtragem com dicionário ASCII**
+   - Entrada: `br-sa.txt`
+   - Mantém apenas palavras presentes na lista ASCII (sem acentos).
 
 5. **Filtragem do modelo Word2Vec**
-   - Carrega modelo `.txt` original (`word2vec_skip_100.txt`)
-   - Aplica a mesma normalização nas palavras do modelo
-   - Filtra o modelo mantendo apenas as palavras normalizadas restantes
-   - Remove duplicatas
-   - Saída: modelo final salvo como `.kv` (`word2vec_filtered.kv`)
+   - Entrada: `word2vec_skip_100.txt`
+   - Carrega o modelo no formato texto.
+   - Normaliza todas as palavras do modelo e filtra usando o vocabulário final.
+   - Remove duplicatas no processo.
+   - Saída: modelo reduzido salvo como `word2vec_final.kv`.
 
-6. **Log e verificações**
-   - Log de todas as etapas é impresso no terminal
-   - Arquivo final contém apenas palavras com representação vetorial no modelo
+6. **Log**
+   - Salva `logs/filtered_words.txt` com as palavras preservadas no modelo `.kv`.
+  
+```mermaid
+flowchart LR
+    A[Modelo Word2Vec .txt] --> B[Extração de palavras frequentes]
+    B --> C[Filtragem com dicionário léxico br-utf8]
+    C --> D[Normalização + Deduplicação]
+    D --> E[Filtragem com dicionário ASCII br-sa]
+    E --> F[Filtragem do modelo]
+    F --> G[Exportação .kv + log]
+```
 
 ### Estrutura
 ```plaintext	
 data_pipeline/
-├── main.py # script principal
-├── config.py # caminhos e constantes
-├── frequency.py # extração da lista de palavras frequentes
-├── filters.py # intersecções com dicionários
-├── normalize.py # regras de normalização
-├── model_utils.py # carregamento e filtragem do modelo Word2Vec
-├── io_utils.py # log e escrita auxiliar
+├── main.py         # script principal
+├── config.py       # caminhos e constantes
+├── frequency.py    # extração da lista de palavras frequentes
+├── filters.py      # intersecções com dicionários
+├── normalize.py    # regras de normalização
+├── model_utils.py  # carregamento e filtragem do modelo Word2Vec
+├── io_utils.py     # log e escrita auxiliar
 ```
 ### Entradas
 
@@ -123,6 +133,7 @@ data_pipeline/
 ```bash
 python data_pipeline/src/main.py
 ```
+
 ### Referências:
 - [Model](http://nilc.icmc.usp.br/nilc/index.php/repositorio-de-word-embeddings-do-nilc) 
 - [Lema Frequency](https://www.linguateca.pt/acesso/ordenador.php)
@@ -130,3 +141,72 @@ python data_pipeline/src/main.py
 - Hartmann, N. S. et al. (2017). *Portuguese Word Embeddings: Evaluating on Word Analogies and Natural Language Tasks*. [arXiv:1708.06025](https://arxiv.org/abs/1708.06025).   Disponível localmente em [`/.docs/1708.06025v1.pdf`](./.docs/1708.06025v1.pdf)
 
 ## Game Builder
+
+O Game Builder é responsável por gerar os arquivos de jogo a partir do modelo semântico previamente filtrado. Cada jogo contém uma palavra-alvo, um conjunto de dicas e dados auxiliares (distância semântica e coordenadas 2D), exportados em formato `.json`.
+
+### Etapas
+
+1. **Carregamento**
+   - O modelo `.kv` é carregado com `gensim`.
+   - O vocabulário é extraído do próprio modelo.
+   - As palavras-alvo são lidas de `targets.txt`.
+
+2. **Construção dos Jogos**
+   Para cada palavra-alvo:
+   - Calcula-se a distância semântica entre a palavra-alvo e todas as demais.
+   - Selecionam-se dicas entre as palavras mais próximas, com balanceamento por faixas.
+   - As palavras são projetadas em duas dimensões com PCA, centralizando a palavra-alvo.
+   - Distâncias são normalizadas e associadas a coordenadas.
+
+3. **Exportação**
+   - Cada jogo é salvo como `0001.json`, `0002.json`, etc.
+   - O vocabulário usado é salvo em `data/vocab/`.
+
+```mermaid
+flowchart LR
+    A[models/verbalyst_v1.kv] --> B[Carregamento do modelo e vocabulário]
+    T[targets.txt] --> B
+
+    B --> C[Construção dos jogos]
+    C --> D1[Cálculo de distâncias semânticas]
+    C --> D2[Seleção de dicas]
+    C --> D3[Projeção PCA e normalização]
+
+    D1 --> E[Exportação dos arquivos JSON]
+    D2 --> E
+    D3 --> E
+
+    B --> F[Exportação do vocabulário]
+    E --> G[data/0001.json, 0002.json, ...]
+    F --> H[data/vocab/vocab01.txt, ...]
+```
+
+### Estrutura
+
+```plaintext
+game_builder/
+├── main.py           # script principal
+├── config.py         # parâmetros e caminhos
+├── target.py         # carrega palavras-alvo
+├── distance.py       # calcula distâncias semânticas
+├── hint.py           # seleciona dicas
+├── coordinates.py    # gera coordenadas 2D
+├── export.py         # salva arquivos de jogo e vocabulário
+```
+### Entradas
+- `models/verbalyst_v1.kv` (modelo filtrado)
+
+- `targets.txt` (palavras-alvo)
+
+### Saídas
+- `data/0001.json`, `data/0002.json` ... (jogos)
+
+- `data/vocab/vocab01.txt`, ... (vocabulário por execução)
+
+### Execução
+```bash
+python game_builder/main.py
+```
+
+## App
+
