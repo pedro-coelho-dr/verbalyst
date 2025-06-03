@@ -1,6 +1,9 @@
 # Verbalyst
 
-O Verbalyst é um jogo de similaridade semântica em português. Inspirado em Contexto/Semantle, desafia o jogador a descobrir uma palavra secreta com base em proximidade semântica calculada a partir de embeddings vetoriais.
+O Verbalyst é um jogo de similaridade semântica em português. Inspirado em Semantle/Contexto, desafia o jogador a descobrir uma palavra secreta com base em proximidade semântica calculada a partir de embeddings vetoriais.
+
+
+https://verbalyst.corisco.space/
 
 ## Overview
 
@@ -8,15 +11,15 @@ A arquitetura é dividida em três etapas principais, conectadas por arquivos in
 
 ### 1. Data Pipeline
 
-Processa um modelo Word2Vec pré-treinado, aplicando filtragens, normalizações e validações para gerar um modelo reduzido em .kv, otimizado para uso em produção.
+Processa um modelo **Word2Vec** pré-treinado, aplicando filtragens, normalizações e validações para gerar um modelo reduzido em `.kv`, otimizado para uso em produção.
 
 ### 2. Game Builder
 
-Utiliza o modelo filtrado para gerar jogos completos em .json, contendo a palavra-alvo, dicas pré-calculadas e coordenadas vetoriais bidimensionais.
+Utiliza o modelo filtrado para gerar jogos completos em `.json`, contendo a palavra-alvo, dicas pré-calculadas e coordenadas vetoriais bidimensionais.
 
 ### 3. App
 
-Composta por backend (FastAPI), frontend (Quasar) e banco de dados (PostgreSQL). Tudo é servido por Nginx, containerizado com Docker e publicado via GitHub Actions na DigitalOcean.
+Composta por **backend (FastAPI)**, **frontend (Quasar)** e **banco de dados (PostgreSQL)**. Tudo é servido por **Nginx**, containerizado com **Docker** e publicado via **GitHub Actions** na **DigitalOcean**.
 
 ### Diagrama de Arquitetura
 ```mermaid
@@ -296,3 +299,14 @@ A aplicação combina um modo diário funcional com uma infraestrutura já prepa
 - A camada visual ainda precisa incorporar o controle de salas, múltiplos jogadores e lógica de turno.
 
 
+## Equipe
+
+- Ana Beatriz Alves 
+- Caio Barreto
+- Caio Bertarelli
+- Camila Cirne
+- Pedro Coelho
+- Virna Amaral
+- Yara Rodrigues
+
+> Este projeto foi desenvolvido como parte da disciplina **Projetos 6** do curso de **Ciência da Computação** da **Cesar School**, no semestre **2025.1**.
