@@ -210,3 +210,89 @@ python game_builder/main.py
 
 ## App
 
+A aplicação do Verbalyst é composta por serviços independentes e containerizados: **Backend (FastAPI)**, **Frontend (Quasar)** e **Banco de Dados (PostgreSQL)**. Esses serviços são orquestrados via **Docker Compose**, com deploy automatizado por **GitHub Actions** em um droplet da **DigitalOcean**. A interface é servida por **Nginx**, que também atua como proxy reverso.
+
+
+
+### Componentes
+
+- **Backend** (`verbalyst-api`)
+  - Desenvolvido com FastAPI.
+  - Responsável por autenticação, endpoints de jogo e integração com o banco.
+  - Endpoints `/guess` e `/hint` funcionam via banco de dados.
+  - Sistema de autenticação via GitHub com JWT já implementado, mas ainda não utilizado no frontend.
+  - Jogos são servidos a partir do banco, e não diretamente dos arquivos `.json`.
+
+- **Banco de Dados** (`verbalyst_db`)
+  - Armazena todos os jogos, vetores, palavras e estatísticas.
+  - Cada palavra possui um vetor e coordenadas 2D.
+  - Suporte completo para histórico de partidas e múltiplos perfis.
+  - Já preparado para multiplayer com suporte a entidades `Room`, `Profile`, `Guess`, mas essa camada ainda não foi ativada no frontend.
+  
+- **Frontend** (`verbalyst-nginx`)
+  - Construído com Quasar.
+  - Utiliza LocalStorage para partidas diárias (modo solo).
+  - A comunicação com o backend já está funcional para `/guess` e `/hint`.
+  - O suporte a autenticação e partidas multiplayer ainda não está integrado.
+
+- **Nginx**
+  - Serve o build estático do Quasar (dist/).
+  - Atua como proxy reverso para a API do backend.
+  - Lida com certificados HTTPS (Let's Encrypt).
+
+- **CI/CD**
+  - Deploy contínuo com GitHub Actions para branch `deploy`, e hospedagem em droplet na DigitalOcean.
+  - Pipeline automatizado com rebuild dos containers de backend, frontend e Nginx.
+
+
+```mermaid
+flowchart LR
+    subgraph Infraestrutura
+        CI[GitHub Actions]
+        DO[DigitalOcean]
+    end
+
+    subgraph App
+        NGINX[Nginx + HTTPS]
+        FE[Frontend Quasar build estático]
+        BE[Backend FastAPI]
+        DB[PostgreSQL]
+    end
+
+    CI --> DO
+    DO --> NGINX
+
+    NGINX --> FE
+    NGINX --> BE
+    FE -->|/guess /hint| BE
+    FE -->|Local diário| LS[LocalStorage]
+    BE -->|Jogos, vetores, tentativas| DB
+```
+
+
+### Funcionalidades e Estado Atual
+
+A aplicação combina um modo diário funcional com uma infraestrutura já preparada para o modo multiplayer, ainda não ativado na interface.
+
+#### Modo Diário (ativo)
+- Executado inteiramente no frontend com persistência em `localStorage`.
+- A lógica de dica e pontuação é processada via backend através dos endpoints `/guess` e `/hint`.
+- Os jogos são carregados do banco com base na data.
+
+#### Multiplayer (em espera)
+- O banco de dados já possui as entidades `Room`, `Profile`, `Guess`, entre outras.
+- O backend já implementa parte da lógica de criação de salas, entrada de jogadores, tentativa e dicas por sessão.
+- A autenticação via GitHub (OAuth + JWT) está concluída, mas ainda não é utilizada na interface.
+- Endpoints e estrutura para WebSocket foram planejados, mas não desenvolvidos.
+
+#### Design Escalável
+- A arquitetura desacopla o front do back por API e permite escalar horizontalmente.
+- Jogos são servidos a partir do banco, centralizando lógica, histórico e métricas.
+- O Game Builder apenas insere os dados iniciais; todo o funcionamento do jogo ocorre dinamicamente via banco e API.
+
+#### Desafios Técnicos
+- A sincronização em tempo real entre jogadores exigirá WebSockets com controle de estado por sala.
+- A autenticação segura via OAuth precisa ser integrada com cookies de sessão e persistência no frontend.
+- A camada visual ainda precisa incorporar o controle de salas, múltiplos jogadores e lógica de turno.
+
+
