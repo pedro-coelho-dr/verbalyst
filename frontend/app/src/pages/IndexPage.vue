@@ -48,15 +48,7 @@
           </q-badge>
         </q-btn>
 
-        <q-btn
-          label="Desisto"
-          color="grey-8"
-          text-color="white"
-          @click="giveUp"
-          class="q-px-md"
-          rounded
-          unelevated
-        />
+
       </div>
 
       <!-- Lista de tentativas -->
@@ -135,10 +127,13 @@ onMounted(loadLocalData)
 watch(gameId, loadLocalData)
 
 function loadLocalData() {
+  if (gameId.value === null) return
+
   guesses.value = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY.value) || '[]')
   hintCount.value = parseInt(localStorage.getItem(HINT_COUNT_KEY.value) || `${MAX_HINTS}`, 10)
   hintNumbersUsed.value = JSON.parse(localStorage.getItem(USED_HINT_NUMBERS_KEY.value) || '[]')
 }
+
 
 watch(guesses, val => {
   localStorage.setItem(LOCALSTORAGE_KEY.value, JSON.stringify(val))
@@ -211,10 +206,6 @@ const useHint = async () => {
   } catch (err) {
     console.error('Erro ao buscar dica', err)
   }
-}
-
-const giveUp = () => {
-  console.log('Desistiu.')
 }
 
 const sortedGuesses = computed(() => {

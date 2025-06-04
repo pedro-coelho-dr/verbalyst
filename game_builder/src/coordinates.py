@@ -6,25 +6,26 @@ def get_coordinates(target: str, hints: list[str], model, distances: dict[str, f
     vectors = np.array([model[word] for word in words])
 
     # PCA projection
-    pca = PCA(n_components=2)
-    coords = pca.fit_transform(vectors)
+    coords = PCA(n_components=2).fit_transform(vectors)
 
     # Centralize on target (word 0)
-    origin = coords[0]
-    coords -= origin
+    coords -= coords[0]
 
-    # Normalize distances
     max_real_dist = max(distances.get(word, 1.0) for word in words)
+    min_radius = 0.2
+    exponent = 0.9
 
-    normalized_coords = []
+    adjusted_coords = []
     for word, (x, y) in zip(words, coords):
         real_distance = distances.get(word, 1.0)
-        normalized_dist = real_distance / max_real_dist
+        scaled_dist = min_radius + (real_distance / max_real_dist) ** exponent
 
-        norm = np.linalg.norm([x, y]) or 1.0  # evita divisão por zero
-        direction = np.array([x, y]) / norm
-        scaled = direction * normalized_dist
+        direction = np.array([x, y]) / (np.linalg.norm([x, y]) or 1.0)
+        final = direction * scaled_dist
+        adjusted_coords.append((float(final[0]), float(final[1])))
 
-        normalized_coords.append((round(float(scaled[0]), 4), round(float(scaled[1]), 4)))
+    # Normalize final coordinates to fit inside a unit circle
+    max_radius = max(np.linalg.norm(c) for c in adjusted_coords) or 1.0
+    final_coords = [(round(x / max_radius, 4), round(y / max_radius, 4)) for x, y in adjusted_coords]
 
-    return dict(zip(words, normalized_coords))
+    return dict(zip(words, final_coords))
