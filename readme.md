@@ -2,6 +2,9 @@
 
 O Verbalyst é um jogo de similaridade semântica em português. Inspirado em Semantle/Contexto, desafia o jogador a descobrir uma palavra secreta com base em proximidade semântica calculada a partir de embeddings vetoriais.
 
+ADD BANCO DE DADOS/multiplayer
+ADD SCATTERMAP
+
 
 https://verbalyst.corisco.space/
 
