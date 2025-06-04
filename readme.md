@@ -2,8 +2,7 @@
 
 O Verbalyst é um jogo de similaridade semântica em português. Inspirado em Semantle/Contexto, desafia o jogador a descobrir uma palavra secreta com base em proximidade semântica calculada a partir de embeddings vetoriais.
 
-ADD BANCO DE DADOS/multiplayer
-ADD SCATTERMAP
+
 
 
 https://verbalyst.corisco.space/
@@ -222,20 +221,20 @@ A aplicação do Verbalyst é composta por serviços independentes e containeriz
 
 ### Componentes
 
-- **Backend** (`verbalyst-api`)
+- **Backend**
   - Desenvolvido com FastAPI.
   - Responsável por autenticação, endpoints de jogo e integração com o banco.
   - Endpoints `/guess` e `/hint` funcionam via banco de dados.
   - Sistema de autenticação via GitHub com JWT já implementado, mas ainda não utilizado no frontend.
   - Jogos são servidos a partir do banco, e não diretamente dos arquivos `.json`.
 
-- **Banco de Dados** (`verbalyst_db`)
+- **Banco de Dados**
   - Armazena todos os jogos, vetores, palavras e estatísticas.
   - Cada palavra possui um vetor e coordenadas 2D.
   - Suporte completo para histórico de partidas e múltiplos perfis.
   - Já preparado para multiplayer com suporte a entidades `Room`, `Profile`, `Guess`, mas essa camada ainda não foi ativada no frontend.
   
-- **Frontend** (`verbalyst-nginx`)
+- **Frontend**
   - Construído com Quasar.
   - Utiliza LocalStorage para partidas diárias (modo solo).
   - A comunicação com o backend já está funcional para `/guess` e `/hint`.
@@ -285,6 +284,24 @@ A aplicação combina um modo diário funcional com uma infraestrutura já prepa
 - A lógica de dica e pontuação é processada via backend através dos endpoints `/guess` e `/hint`.
 - Os jogos são carregados do banco com base na data.
 
+```json
+// Exemplo de resposta do backend para uma tentativa (guess)
+{
+  "guess": "futebol",
+  "distance": 137,
+  "x": -0.342,
+  "y": 0.876,
+  "correct": false
+}
+```
+
+#### Visualização Semântica 2D (novo)
+- O frontend agora exibe um mapa vetorial 2D com as tentativas do jogador.
+- Cada palavra (palpite ou dica) é representada por um ponto com coordenadas `(x, y)` calculadas no backend com base no modelo Word2Vec. A palavra-alvo sempre fica na origem `(0.0, 0.0)`.
+- O componente `ScatterMap.vue` usa essas coordenadas para exibir as tentativas de forma visual, com cores baseadas na distância semântica.
+
+![alt text](/.docs/image.png)
+
 #### Multiplayer (em espera)
 - O banco de dados já possui as entidades `Room`, `Profile`, `Guess`, entre outras.
 - O backend já implementa parte da lógica de criação de salas, entrada de jogadores, tentativa e dicas por sessão.
@@ -301,6 +318,79 @@ A aplicação combina um modo diário funcional com uma infraestrutura já prepa
 - A autenticação segura via OAuth precisa ser integrada com cookies de sessão e persistência no frontend.
 - A camada visual ainda precisa incorporar o controle de salas, múltiplos jogadores e lógica de turno.
 
+
+  
+#### Banco de Dados com Suporte a Multiplayer
+
+```mermaid
+erDiagram
+    profile ||--o{ player : has
+    game ||--|| room : uses
+    word ||--o{ game : targets
+    word ||--o{ wordscore : is_target
+    word ||--o{ wordscore : is_word
+    player ||--o{ guess : makes
+
+    profile {
+        int id
+        varchar auth_provider
+        varchar auth_sub
+        varchar username
+        int total_score
+        int total_games
+        int total_wins
+        int total_hints_used
+        int total_guesses
+    }
+
+    room {
+        int id
+        int code
+        varchar status
+    }
+
+    game {
+        int id
+        int fk_room_id
+        int fk_target_word
+        varchar precomputed_hints
+    }
+
+    player {
+        int id
+        int fk_game_id
+        int fk_profile_id
+        int hints_used
+        boolean completed
+        timestamp completed_at
+        int score_gained
+        int guesses_count
+    }
+
+    guess {
+        int id
+        int fk_player_id
+        varchar guess
+        double guess_score
+    }
+
+    word {
+        int id
+        varchar word
+        double x
+        double y
+    }
+
+    wordscore {
+        int id
+        int fk_word
+        int fk_target
+        int rank
+        double distance
+        double x
+        double y
+    }
+```
 
 ## Equipe
 
